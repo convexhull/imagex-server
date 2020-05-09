@@ -1,9 +1,24 @@
 var express = require('express');
+
+
+const imageRouter = require('../components/image-analysis/router');
+const userRouter = require('../components/users/router');
+
+
+
 var router = express.Router();
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+
+router.get('/ping', (req, res) => {
+  res.send({
+    reply: "pong"
+  })
 });
+
+
+
+router.use('/image', imageRouter);
+router.use('/users', userRouter);
+
 
 module.exports = router;
