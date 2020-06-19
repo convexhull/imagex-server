@@ -9,7 +9,7 @@ const unsplash = new Unsplash({ accessKey: process.env.UNSPLASH_API_ACCESS_KEY})
 
 
 const getRandomPhoto = (req, res) => {
-    unsplash.photos.getRandomPhoto()
+    unsplash.photos.getRandomPhoto({orientation : "landscape"})
         .then(toJson)
         .then(json => {
             res.send(json);
