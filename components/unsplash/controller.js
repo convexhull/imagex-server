@@ -26,7 +26,8 @@ const searchPhotos = (req, res) => {
         images: null
     }
     let searchKeywords = req.query.keywords;
-    unsplash.search.photos(searchKeywords, 1, 10)
+    let page = req.query.page;
+    unsplash.search.photos(searchKeywords, page, 10)
         .then(toJson)
         .then(json => {
             let images = json.results;
