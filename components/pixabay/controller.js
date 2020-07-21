@@ -10,7 +10,7 @@ const searchPhotos = async (req, res) => {
     let searchKeywords = req.query.keywords;
     let page = req.query.page;
     try {
-        let apiResponse = await axios.get(`https://pixabay.com/api?key=${process.env.PIXABAY_API_KEY}&q=${searchKeywords}&page=${page}&per_page=3`);
+        let apiResponse = await axios.get(`https://pixabay.com/api?key=${process.env.PIXABAY_API_KEY}&q=${searchKeywords}&page=${page}&per_page=10`);
         let images = apiResponse.data.hits;
         res.send({
             ...data,
