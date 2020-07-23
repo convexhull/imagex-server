@@ -5,9 +5,10 @@ const AuthUtils = require('../../../utils/auth');
 const createNewUser = async(payload, data) => {
     let userObj = {
         email : payload.body.email,
-        name : payload.body.name,
         userName : payload.body.userName,
-        password : payload.body.password
+        password : payload.body.password,
+        firstName: payload.body.firstName,
+        lastName: payload.body.lastName
     };
     let createdUser = {};
     try {
