@@ -51,7 +51,7 @@ const loginUser = async (req, res) => {
     }   
     catch(e){
         console.log(e);
-        res.send({
+        res.status(401).send({
             ...apiResponse,
             success : false,
             error : true,
