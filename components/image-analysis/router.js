@@ -15,5 +15,4 @@ const router = express.Router();
 router
     .get('/', upload.single('avatar'), authenticateToken, ImageController.uploadImage);
 
-
 module.exports = router;

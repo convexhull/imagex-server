@@ -4,12 +4,12 @@ const fetch = require('node-fetch');
 global.fetch = fetch;
 
 
-const unsplash = new Unsplash({ accessKey: process.env.UNSPLASH_API_ACCESS_KEY});
+const unsplash = new Unsplash({ accessKey: process.env.UNSPLASH_API_ACCESS_KEY });
 
 
 
 const getRandomPhoto = (req, res) => {
-    unsplash.photos.getRandomPhoto({orientation : "landscape"})
+    unsplash.photos.getRandomPhoto({ orientation: "landscape" })
         .then(toJson)
         .then(json => {
             res.send(json);
