@@ -8,7 +8,7 @@ const router = express.Router();
 
 
 router
-    .post('/getSimilarImages', upload.single('asset'), computerVisionController.getSimilarImages)
+    .post('/getSimilarImages', upload.single('file'), computerVisionController.getSimilarImages)
 
 module.exports = router;
 

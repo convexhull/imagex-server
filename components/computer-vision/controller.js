@@ -1,46 +1,39 @@
-const axios = require('axios');
-
-
-
+const axios = require("axios");
 
 const getSimilarImages = async (req, res) => {
-    const base64Image = req.file.buffer.toString('base64');
-    let imageUploadURL = `https://api.shutterstock.com/v2/cv/images`;
-    let imageUploadData = {
-        "base64_image": base64Image
-    };
-    let imageUploadConfig = {
-        headers: {
-            'Authorization': "Bearer v2/QUlPVjJWVUpHd0FRckxVWTQxczFrUjBTY2JxS3pvdjcvMjY3OTYxMTE4L2N1c3RvbWVyLzMvY3JsMWxmR3p2Z1pydXFLR2hXcnFkeVpLRUthWEdMWXRwNkVQVWZRejIzQ29PXzVhSTBsVk14RGxoRWU3QUtEZGUwZVhJejdiTlZQQVJ5aHc4RHZPWXl3LUFxN1YzTU12MjFlMXUwWWZ1VjFSMERZVzZqU3l0RUptRFlCUktTNm41QU55dkRyZ3RkSzVBWUVZVEVZN055TGVCd2dGZEttLVpmd1lFR2tqSzFrdE92dTV5YWhBR094U2czX011N3VoRy1uMHIxbklDVDZlZ2NsOFExLXFZZw"
-        }
-    }
-    let imageUploadResponse = await axios.post(imageUploadURL, imageUploadData, imageUploadConfig);
-    console.log(imageUploadResponse.data);
-    res.send(imageUploadResponse.data);
-    // axios.post(imageUploadURL, , {
-        
-    // })
-    //     .then(data => {
-    //         console.log(data.data);
-    //         return axios.get(`https://api.shutterstock.com/v2/cv/similar/images?asset_id=${data.data.upload_id}`, {
-    //             headers: {
-    //                 'Authorization': "Bearer v2/QUlPVjJWVUpHd0FRckxVWTQxczFrUjBTY2JxS3pvdjcvMjY3OTYxMTE4L2N1c3RvbWVyLzMvY3JsMWxmR3p2Z1pydXFLR2hXcnFkeVpLRUthWEdMWXRwNkVQVWZRejIzQ29PXzVhSTBsVk14RGxoRWU3QUtEZGUwZVhJejdiTlZQQVJ5aHc4RHZPWXl3LUFxN1YzTU12MjFlMXUwWWZ1VjFSMERZVzZqU3l0RUptRFlCUktTNm41QU55dkRyZ3RkSzVBWUVZVEVZN055TGVCd2dGZEttLVpmd1lFR2tqSzFrdE92dTV5YWhBR094U2czX011N3VoRy1uMHIxbklDVDZlZ2NsOFExLXFZZw"
-    //             }
-    //         })
-    //     })
-    //     .then(d => {
-    //         console.log(d.data);
-    //         res.send(d.data);
-    //     })
-    //     .catch(e => {
-    //         console.log(e.message);
-    //     })
-}   
+  const base64Image = req.file.buffer.toString("base64");
 
+  console.log(base64Image);
+  let imageUploadURL = `https://api.shutterstock.com/v2/cv/images`;
+  let imageUploadData = {
+    base64_image: base64Image,
+  };
+  let imageUploadConfig = {
+    headers: {
+      Authorization: process.env.COMPUTER_VISION_TOKEN,
+    },
+  };
+  try {
+    let imageUploadResponse = await axios.post(
+      imageUploadURL,
+      imageUploadData,
+      imageUploadConfig
+    );
+    let upload_id = imageUploadResponse.data.upload_id;
 
+    let similarImagesURL = `https://api.shutterstock.com/v2/cv/similar/images?asset_id=${upload_id}`;
+    let similarImagesResponse = await axios.get(similarImagesURL, {
+      headers: {
+        Authorization: process.env.COMPUTER_VISION_TOKEN,
+      },
+    });
 
-
+    res.send(similarImagesResponse.data);
+  } catch (e) {
+    console.log(e);
+  }
+};
 
 module.exports = {
-    getSimilarImages
-}
+  getSimilarImages,
+};
