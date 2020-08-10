@@ -1,9 +1,7 @@
 const axios = require("axios");
 
-const getSimilarImages = async (req, res) => {
+const uploadImage = async (req, res) => {
   const base64Image = req.file.buffer.toString("base64");
-
-  console.log(base64Image);
   let imageUploadURL = `https://api.shutterstock.com/v2/cv/images`;
   let imageUploadData = {
     base64_image: base64Image,
@@ -20,8 +18,19 @@ const getSimilarImages = async (req, res) => {
       imageUploadConfig
     );
     let upload_id = imageUploadResponse.data.upload_id;
+    res.send({
+      upload_id
+    });
+  } catch (e) {
+    res.status(500).send(e.message);
+  }
+};
 
-    let similarImagesURL = `https://api.shutterstock.com/v2/cv/similar/images?asset_id=${upload_id}`;
+const getSimilarImages = async (req, res) => {
+  let upload_id = req.query.upload_id;
+  let page = req.query.page;
+  try {
+    let similarImagesURL = `https://api.shutterstock.com/v2/cv/similar/images?asset_id=${upload_id}&page=${page}`;
     let similarImagesResponse = await axios.get(similarImagesURL, {
       headers: {
         Authorization: process.env.COMPUTER_VISION_TOKEN,
@@ -31,9 +40,11 @@ const getSimilarImages = async (req, res) => {
     res.send(similarImagesResponse.data);
   } catch (e) {
     console.log(e);
+    res.status(500).send(e.message);
   }
 };
 
 module.exports = {
+  uploadImage,
   getSimilarImages,
 };

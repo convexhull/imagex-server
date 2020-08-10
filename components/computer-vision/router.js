@@ -4,11 +4,13 @@ const upload = multer();
 
 
 const computerVisionController = require('./controller');
+const controller = require('./controller');
 const router = express.Router();
 
 
 router
-    .post('/getSimilarImages', upload.single('file'), computerVisionController.getSimilarImages)
+    .post('/uploadImage', upload.single('file'), computerVisionController.uploadImage)
+    .get('/getSimilarImages', computerVisionController.getSimilarImages)
 
 module.exports = router;
 
