@@ -30,11 +30,11 @@ const getSimilarImages = async (req, res) => {
   let upload_id = req.query.upload_id;
   let page = req.query.page;
   try {
-    let similarImagesURL = `https://api.shutterstock.com/v2/cv/similar/images?asset_id=${upload_id}&page=${page}`;
+    let similarImagesURL = `https://api.shutterstock.com/v2/cv/similar/images?asset_id=${upload_id}&page=${page}&view=full`;
     let similarImagesResponse = await axios.get(similarImagesURL, {
       headers: {
         Authorization: process.env.COMPUTER_VISION_TOKEN,
-      },
+      }
     });
 
     res.send(similarImagesResponse.data);
