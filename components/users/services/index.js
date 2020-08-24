@@ -1,5 +1,6 @@
 const dbService = require('./db.service');
 const AuthUtils = require('../../../utils/auth');
+const { db } = require('../model');
 
 
 const createNewUser = async(payload, data) => {
@@ -32,6 +33,30 @@ const createNewUser = async(payload, data) => {
 
 
 
+const addFavouriteImage = async (image, user) => {
+    let criteria = {
+        email: user.email
+    };
+    let updateObj = {
+        "$push" : {
+            favouriteImages: image._id
+        }
+    };
+    let options = {
+        new: true,
+        upsert: true
+    };
+    try {   
+        let updatedUser = await dbService.updateUser(criteria, updateObj, options);
+        return updatedUser;
+    } catch(e) {
+        throw e;
+    }
+}
+
+
+
+
 const loginUser = async (payload, data) => {
     let criteria = {
         email : payload.body.email,
@@ -59,7 +84,32 @@ const loginUser = async (payload, data) => {
 }
 
 
+
+const getFavouriteImages = async (user) => {
+    let aggregationPipeline = [
+        {
+            "$lookup" : {
+                "from" : "images",
+                "localField" : "favouriteImages",
+                "foreignField": "_id",
+                "as": "demo"
+            }
+        }
+    ];
+
+    try {
+        let data = await dbService.aggregateUsers(aggregationPipeline);
+        console.log(data);
+    } catch(e) {
+        console.log(e);
+    }
+
+}
+
+
 module.exports = {
     createNewUser,
-    loginUser
+    addFavouriteImage,
+    loginUser,
+    getFavouriteImages
 }

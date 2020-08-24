@@ -1,4 +1,5 @@
 const userService = require('./services');
+const services = require('./services');
 
 
 
@@ -61,7 +62,18 @@ const loginUser = async (req, res) => {
 }
 
 
+const getFavouriteImages = async (req, res) => {
+    try {
+        let favouriteImages = await services.getFavouriteImages(req.user);
+        console.log(JSON.stringify(favouriteImages, null, 2));
+    } catch(e) {
+        console.log(e);
+    }
+
+}
+
 module.exports = {
     createNewUser,
-    loginUser
+    loginUser,
+    getFavouriteImages
 }

@@ -12,7 +12,19 @@ function findOneUser(criteria, projection, options) {
 }
 
 
+function updateUser(criteria, updateObject, options) {
+    return Users.findOneAndUpdate(criteria, updateObject, options);
+}
+
+
+function aggregateUsers(pipeline) {
+    return Users.aggregate(pipeline);
+}
+
+
 module.exports = {
     insertUser,
-    findOneUser
+    findOneUser,
+    updateUser,
+    aggregateUsers
 }

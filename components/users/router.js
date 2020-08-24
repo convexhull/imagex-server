@@ -11,8 +11,7 @@ const router = express.Router();
 router
     .post('/signup', userController.createNewUser)
     .post('/login', userController.loginUser)
-    // .post('/logout', userController.logoutUser)
-
+    .get('/favourite-images', authenticateToken,  userController.getFavouriteImages)
 
 
 module.exports = router;
