@@ -13,6 +13,9 @@ const saveImage = async (req, res) => {
         let savedImage = await imageServices.saveImage(req.body, req.user);
         let updatedUser = await userServices.addFavouriteImage(savedImage, req.user);
         responseData.data = savedImage;
+        responseData.success = true;
+        responseData.error = false;
+        responseData.message = "Image saved";
         res.send(responseData);
     } catch(e) {
         responseData.error = e;

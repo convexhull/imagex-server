@@ -1,10 +1,15 @@
 const db = require('./db.service');
 
 const saveImage = async (payload, user) => {
+    console.log(payload,"zzx");
     let imageToSave = {
-        url: payload.url,
         platform: payload.platform, 
-        imageId: payload.imageId
+        imageId: payload.imageId,
+        pageUrl: payload.pageUrl,
+        smallImageUrl: payload.smallImageUrl,
+        mediumImageUrl: payload.mediumImageUrl,
+        largeImageUrl: payload.largeImageUrl,
+        downloadUrl: payload.downloadUrl
     };
     try {
         let savedImage = await db.insertImage(imageToSave);

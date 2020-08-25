@@ -1,6 +1,5 @@
 const dbService = require('./db.service');
 const AuthUtils = require('../../../utils/auth');
-const { db } = require('../model');
 
 
 const createNewUser = async(payload, data) => {
@@ -92,14 +91,13 @@ const getFavouriteImages = async (user) => {
                 "from" : "images",
                 "localField" : "favouriteImages",
                 "foreignField": "_id",
-                "as": "demo"
+                "as": "favouriteImagesl"
             }
         }
     ];
-
     try {
         let data = await dbService.aggregateUsers(aggregationPipeline);
-        console.log(data);
+        console.log(JSON.stringify(data,null,2));
     } catch(e) {
         console.log(e);
     }
