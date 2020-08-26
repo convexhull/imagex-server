@@ -63,11 +63,24 @@ const loginUser = async (req, res) => {
 
 
 const getFavouriteImages = async (req, res) => {
+    let responseData = {
+        success: true,
+        error: false,
+        message: ``,
+        data: null
+    };
     try {
         let favouriteImages = await services.getFavouriteImages(req.user);
-        console.log(JSON.stringify(favouriteImages, null, 2));
+        responseData.data = favouriteImages;
+        responseData.message = "Images fetched successfully";
+        res.send(responseData);
     } catch(e) {
-        console.log(e);
+        responseData = {
+            success: false,
+            error: true,
+            message: "Some error occurred",
+        };
+        res.status(500).send(responseData);
     }
 
 }

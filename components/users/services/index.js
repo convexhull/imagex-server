@@ -85,23 +85,30 @@ const loginUser = async (payload, data) => {
 
 
 const getFavouriteImages = async (user) => {
+    console.log("xxx", user);
     let aggregationPipeline = [
+        {
+            "$match" : {
+                "email" : user.email
+            }
+        },
         {
             "$lookup" : {
                 "from" : "images",
                 "localField" : "favouriteImages",
                 "foreignField": "_id",
-                "as": "favouriteImagesl"
+                "as": "favouriteImages"
             }
         }
     ];
     try {
-        let data = await dbService.aggregateUsers(aggregationPipeline);
-        console.log(JSON.stringify(data,null,2));
+        let result = await dbService.aggregateUsers(aggregationPipeline);
+        let images = result[0].favouriteImages;
+        return images;
     } catch(e) {
         console.log(e);
+        throw e;
     }
-
 }
 
 
