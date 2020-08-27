@@ -1,5 +1,6 @@
 const dbService = require('./db.service');
 const AuthUtils = require('../../../utils/auth');
+const { db, update } = require('../model');
 
 
 const createNewUser = async(payload, data) => {
@@ -85,7 +86,6 @@ const loginUser = async (payload, data) => {
 
 
 const getFavouriteImages = async (user) => {
-    console.log("xxx", user);
     let aggregationPipeline = [
         {
             "$match" : {
@@ -111,10 +111,48 @@ const getFavouriteImages = async (user) => {
     }
 }
 
+const updateUserProfile = async (req, res) => {
+    let user = req.user;
+    let criteria = {
+        email: user.email
+    };
+    let valuesToSet = {};
+    if(req.body.firstName){
+        valuesToSet.firstName = req.body.firstName;
+    }
+    if(req.body.lastName){
+        valuesToSet.lastName = req.body.lastName;
+    }
+    if(req.body.email){
+        valuesToSet.email = req.body.email;
+    }
+    if(req.body.userName){
+        valuesToSet.userName = req.body.userName;
+    }
+    if(req.body.password){
+        valuesToSet.password = req.body.password;
+    }
+    let updateObj = {
+      "$set": valuesToSet
+    };
+    let options = {
+        new: true
+    };
+    try {
+        let updatedUser = await dbService.updateUser(criteria, updateObj, options);
+        return updatedUser;
+    } catch(e) {
+        throw e;
+    }
+}
+
 
 module.exports = {
     createNewUser,
     addFavouriteImage,
     loginUser,
-    getFavouriteImages
+    getFavouriteImages,
+    updateUserProfile
 }
+
+

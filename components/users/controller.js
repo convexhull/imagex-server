@@ -1,5 +1,6 @@
 const userService = require('./services');
 const services = require('./services');
+const { response } = require('express');
 
 
 
@@ -85,8 +86,38 @@ const getFavouriteImages = async (req, res) => {
 
 }
 
+
+
+const updateUser = async (req, res) => {
+    let responseData = {
+        success: false,
+        error: false,
+        message: '',
+        data: null
+    };
+    try {
+        let updateUser = await services.updateUserProfile(req);
+        responseData = {
+            success: true,
+            error: false,
+            message: "User updated successfully",
+            data: updateUser
+        }
+        res.send(responseData);
+    } catch(e) {
+        console.log(e);
+        responseData = {
+            success: false,
+            error: true,
+            message: "Some error occurred in updating"
+        }
+        res.status(500).send(responseData);
+    }   
+}
+
 module.exports = {
     createNewUser,
     loginUser,
-    getFavouriteImages
+    getFavouriteImages,
+    updateUser
 }

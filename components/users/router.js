@@ -12,6 +12,7 @@ router
     .post('/signup', userController.createNewUser)
     .post('/login', userController.loginUser)
     .get('/favourite-images', authenticateToken,  userController.getFavouriteImages)
+    .put('/update', authenticateToken, userController.updateUser)
 
 
 module.exports = router;
