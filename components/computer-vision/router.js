@@ -4,7 +4,6 @@ const upload = multer();
 
 
 const computerVisionController = require('./controller');
-const controller = require('./controller');
 const router = express.Router();
 
 

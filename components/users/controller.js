@@ -115,9 +115,32 @@ const updateUser = async (req, res) => {
     }   
 }
 
+
+const updateProfilePic = async (req, res) => {
+  let responseData = {
+    success: false,
+    error: false,
+    message: "",
+    data: null,
+  };
+  try {
+    let updatedUser = await services.updateProfilePic(req.file, req.user);
+    responseData = {
+      success: true,
+      error: false,
+      message: "Profile pic updated successfully",
+      data: updatedUser,
+    };
+    res.send(responseData);
+  } catch (e) {
+    res.status(500).send(e.message);
+  }
+};
+
 module.exports = {
     createNewUser,
     loginUser,
     getFavouriteImages,
-    updateUser
+    updateUser,
+    updateProfilePic
 }

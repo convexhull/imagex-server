@@ -1,4 +1,7 @@
 const express = require('express');
+const multer = require('multer');
+
+const upload = multer();
 
 
 
@@ -13,6 +16,7 @@ router
     .post('/login', userController.loginUser)
     .get('/favourite-images', authenticateToken,  userController.getFavouriteImages)
     .put('/update', authenticateToken, userController.updateUser)
+    .post('/updateProfilePic', authenticateToken, upload.single('file'), userController.updateProfilePic)
 
 
 module.exports = router;

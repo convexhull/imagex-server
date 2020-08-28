@@ -1,6 +1,7 @@
 const dbService = require('./db.service');
 const AuthUtils = require('../../../utils/auth');
-const { db, update } = require('../model');
+const cloudinary = require('../../../utils/cloudinary');
+const { update } = require('../model');
 
 
 const createNewUser = async(payload, data) => {
@@ -147,12 +148,38 @@ const updateUserProfile = async (req, res) => {
 }
 
 
+
+
+const updateProfilePic = async(image, user) => {
+    let criteria = {
+        email: user.email
+    };
+    const base64Image = image.buffer.toString("base64");
+    try {
+        let cloudinaryResponse = await cloudinary.uploadToCloud(base64Image);
+        console.log("xxx", cloudinaryResponse);
+        let updateObj = {
+            "$set" : {
+                profilePicUrl:  cloudinaryResponse.url
+            }
+        };
+        let options = {
+            new: true
+        };
+        let updatedUser = await dbService.updateUser(criteria, updateObj, options);
+        return updatedUser;
+    } catch(e){
+        throw e;
+    }
+}
+
 module.exports = {
     createNewUser,
     addFavouriteImage,
     loginUser,
     getFavouriteImages,
-    updateUserProfile
+    updateUserProfile,
+    updateProfilePic
 }
 
 

@@ -10,6 +10,7 @@ const UserSchema = Schema({
     password : { type : String},
     firstName : { type : String},
     lastName: { type: String },
+    profilePicUrl: { type: String },
     favouriteImages: [{type: Schema.Types.ObjectId}]
 });
 

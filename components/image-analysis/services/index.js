@@ -25,7 +25,6 @@ const uploadImageToS3 = async (payload, data) => {
 
 
 
-
 module.exports = {
     uploadImageToS3
 }
