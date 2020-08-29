@@ -137,10 +137,39 @@ const updateProfilePic = async (req, res) => {
   }
 };
 
+
+const getOwnAccountInfo = async (req, res) => {
+    let responseData = {
+        success: true,
+        error: false,
+        message: '',
+        data: null
+    };
+    try {
+        let user = await services.getOwnAccountInfo(req.user);
+        responseData = {
+            success: true,
+            error: false,
+            message: "User details found",
+            data: user
+        };
+        res.send(responseData);
+    } catch(e) {
+        console.log(e);
+        responseData = {
+            success: false,
+            error: true,
+            message: e.message
+        };
+        res.status(500).send(responseData);
+    }
+}
+
 module.exports = {
     createNewUser,
     loginUser,
     getFavouriteImages,
     updateUser,
-    updateProfilePic
+    updateProfilePic,
+    getOwnAccountInfo
 }

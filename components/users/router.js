@@ -17,6 +17,7 @@ router
     .get('/favourite-images', authenticateToken,  userController.getFavouriteImages)
     .put('/update', authenticateToken, userController.updateUser)
     .post('/updateProfilePic', authenticateToken, upload.single('file'), userController.updateProfilePic)
+    .get('/ownAccountInfo', authenticateToken, userController.getOwnAccountInfo)
 
 
 module.exports = router;

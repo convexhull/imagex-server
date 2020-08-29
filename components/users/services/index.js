@@ -173,13 +173,27 @@ const updateProfilePic = async(image, user) => {
     }
 }
 
+
+const getOwnAccountInfo = async(user) => {
+    let criteria = {
+        email: user.email
+    };
+    try {
+        let user = await dbService.findOneUser(criteria);
+        return user;
+    } catch(e) {
+        throw e;
+    }
+}
+
 module.exports = {
     createNewUser,
     addFavouriteImage,
     loginUser,
     getFavouriteImages,
     updateUserProfile,
-    updateProfilePic
+    updateProfilePic,
+    getOwnAccountInfo
 }
 
 
