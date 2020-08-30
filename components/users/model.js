@@ -11,7 +11,8 @@ const UserSchema = Schema({
     firstName : { type : String},
     lastName: { type: String },
     profilePicUrl: { type: String },
-    favouriteImages: [{type: Schema.Types.ObjectId}]
+    favouriteImages: [{type: Schema.Types.ObjectId}],
+    bio: {type: String}
 });
 
 

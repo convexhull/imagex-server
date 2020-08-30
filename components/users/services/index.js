@@ -133,6 +133,9 @@ const updateUserProfile = async (req, res) => {
     if(req.body.password){
         valuesToSet.password = req.body.password;
     }
+    if(req.body.bio){
+        valuesToSet.bio = req.body.bio;
+    }
     let updateObj = {
       "$set": valuesToSet
     };
