@@ -112,7 +112,7 @@ const getFavouriteImages = async (user) => {
     }
 }
 
-const updateUserProfile = async (req, res) => {
+const updateUserProfile = async (req) => {
     let user = req.user;
     let criteria = {
         email: user.email
@@ -124,9 +124,9 @@ const updateUserProfile = async (req, res) => {
     if(req.body.lastName){
         valuesToSet.lastName = req.body.lastName;
     }
-    if(req.body.email){
-        valuesToSet.email = req.body.email;
-    }
+    // if(req.body.email){
+    //     valuesToSet.email = req.body.email;
+    // }
     if(req.body.userName){
         valuesToSet.userName = req.body.userName;
     }
@@ -160,7 +160,6 @@ const updateProfilePic = async(image, user) => {
     const base64Image = image.buffer.toString("base64");
     try {
         let cloudinaryResponse = await cloudinary.uploadToCloud(base64Image);
-        console.log("xxx", cloudinaryResponse);
         let updateObj = {
             "$set" : {
                 profilePicUrl:  cloudinaryResponse.url
