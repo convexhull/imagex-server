@@ -6,7 +6,7 @@ const userRouter = require('../components/users/router');
 const unsplashRouter = require('../components/unsplash/router');
 const pixabayRouter = require('../components/pixabay/router');
 const computerVisionRouter = require('../components/computer-vision/router');
-const imageListRouter = require('../components/image-list/router');
+const favouriteImagesRouter = require('../components/favouriteImages/router');
 
 
 var router = express.Router();
@@ -24,7 +24,7 @@ router.use('/users', userRouter);
 router.use('/unsplash', unsplashRouter);
 router.use('/pixabay', pixabayRouter);
 router.use('/computer-vision', computerVisionRouter);
-router.use('/image-list', imageListRouter);
+router.use('/image-list', favouriteImagesRouter);
 
 
 module.exports = router;

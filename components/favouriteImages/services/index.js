@@ -1,7 +1,6 @@
 const db = require('./db.service');
 
 const saveImage = async (payload, user) => {
-    console.log(payload,"zzx");
     let imageToSave = {
         platform: payload.platform, 
         imageId: payload.imageId,

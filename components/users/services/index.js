@@ -186,6 +186,7 @@ const getOwnAccountInfo = async(user) => {
     } catch(e) {
         throw e;
     }
+
 }
 
 module.exports = {
