@@ -1,6 +1,7 @@
 const userService = require('./services');
 const services = require('./services');
 const { response } = require('express');
+const { update } = require('./model');
 
 
 
@@ -165,11 +166,40 @@ const getOwnAccountInfo = async (req, res) => {
     }
 }
 
+
+const removeFavouriteImage = async (req, res) => {
+    let responseData = {
+        success: true,
+        error: false,
+        message: '',
+        data: null
+    };
+    try {
+        let updatedUser = await services.removeFavouriteImage(req, req.user);
+        responseData = {
+            success: true,
+            error: false,
+            message: "Image removed",
+            data: updatedUser
+        }
+        res.send(responseData);
+    } catch(e) {
+        console.log(e);
+        responseData = {
+            success: false,
+            error: true,
+            message: e.message
+        };
+        res.status(500).send(responseData);
+    }
+}
+
 module.exports = {
     createNewUser,
     loginUser,
     getFavouriteImages,
     updateUser,
     updateProfilePic,
-    getOwnAccountInfo
+    getOwnAccountInfo,
+    removeFavouriteImage
 }

@@ -186,8 +186,28 @@ const getOwnAccountInfo = async(user) => {
     } catch(e) {
         throw e;
     }
-
 }
+
+const removeFavouriteImage = async(payload, user) => {
+    let criteria = {
+        email: user.email
+    };
+    let updateObject = {
+        "$pull" : {
+            "favouriteImages" : payload.query.imageId
+        }
+    };
+    let options = {
+        new: true
+    };
+    try {
+        let updatedUser = await dbService.updateUser(criteria, updateObject, options);
+        return updatedUser;
+    } catch(e){ 
+        throw e;
+    }
+}
+
 
 module.exports = {
     createNewUser,
@@ -196,7 +216,8 @@ module.exports = {
     getFavouriteImages,
     updateUserProfile,
     updateProfilePic,
-    getOwnAccountInfo
+    getOwnAccountInfo,
+    removeFavouriteImage
 }
 
 
