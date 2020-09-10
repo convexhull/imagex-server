@@ -12,7 +12,8 @@ const imageSchema = Schema({
     smallImageUrl: { type: String },
     downloadUrl: { type: String },
     imageId: { type: String },
-    createdAt: { type: Date, default: Date.now}
+    createdAt: { type: Date, default: Date.now},
+    aspect: { type: Number }
 });
 
 

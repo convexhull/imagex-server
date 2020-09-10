@@ -9,7 +9,8 @@ const createNewUser = async(payload, data) => {
         userName : payload.body.userName,
         password : payload.body.password,
         firstName: payload.body.firstName,
-        lastName: payload.body.lastName
+        lastName: payload.body.lastName,
+        profilePicUrl: "https://www.cornwallbusinessawards.co.uk/wp-content/uploads/2017/11/dummy450x450.jpg"
     };
     let createdUser = {};
     try {

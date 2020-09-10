@@ -8,7 +8,8 @@ const saveImage = async (payload, user) => {
         smallImageUrl: payload.smallImageUrl,
         mediumImageUrl: payload.mediumImageUrl,
         largeImageUrl: payload.largeImageUrl,
-        downloadUrl: payload.downloadUrl
+        downloadUrl: payload.downloadUrl,
+        aspect: payload.aspect
     };
     try {
         let savedImage = await db.insertImage(imageToSave);
