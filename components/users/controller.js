@@ -1,7 +1,5 @@
 const userService = require('./services');
 const services = require('./services');
-const { response } = require('express');
-const { update } = require('./model');
 
 
 

@@ -1,8 +1,7 @@
 const dbService = require('./db.service');
 const AuthUtils = require('../../../utils/auth');
 const cloudinary = require('../../../utils/cloudinary');
-const { update } = require('../model');
-
+const Hashing = require('../../../utils/hash');
 
 const createNewUser = async(payload, data) => {
     let userObj = {
@@ -19,6 +18,9 @@ const createNewUser = async(payload, data) => {
         };
         let existingUser = await dbService.findOneUser(criteria);
         if(!existingUser){
+            let password = payload.body.password;
+            let hashedPassword = await Hashing.encryptPassword(password);
+            userObj.password = hashedPassword;
             createdUser = await dbService.insertUser(userObj);
             createdUser = createdUser.toObject();
             createdUser.token = AuthUtils.generateAuthToken({email : payload.body.email , userName : payload.body.userName});
@@ -60,22 +62,25 @@ const addFavouriteImage = async (image, user) => {
 
 const loginUser = async (payload, data) => {
     let criteria = {
-        email : payload.body.email,
-        password : payload.body.password
+        email : payload.body.email
     };
-
     let user = {};
-
     try {
         user = await dbService.findOneUser(criteria);
         if(!user){
             throw new Error("EMAIL_DOESNOT_EXIST");
         }
         else {
-            console.log("found user in db", user);
+            let userPassword = user.password;
+            let suppliedPassword = payload.body.password;
+            let passwordMatch = await Hashing.decryptPassword(suppliedPassword, userPassword);
+            if(!passwordMatch){
+                throw new Error("PASSWORD_MISMATCH");
+            }
             const token = AuthUtils.generateAuthToken({email : user.email , userName : user.userName});
             user = user.toObject();
             user.token = token;
+            delete user.password;
             return user;
         }
     }   
