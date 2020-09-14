@@ -1,10 +1,5 @@
-const Unsplash = require('unsplash-js').default;
-const { toJson } = require('unsplash-js');
-const fetch = require('node-fetch');
-global.fetch = fetch;
+const UnsplashServices = require('./services/index');
 
-
-const unsplash = new Unsplash({ accessKey: process.env.UNSPLASH_API_ACCESS_KEY });
 
 
 
@@ -12,6 +7,7 @@ const getRandomPhoto = (req, res) => {
     unsplash.photos.getRandomPhoto({ orientation: "landscape" })
         .then(toJson)
         .then(json => {
+            console.log("zzz", json);
             res.send(json);
         })
         .catch(e => {
@@ -20,25 +16,32 @@ const getRandomPhoto = (req, res) => {
 }
 
 
-const searchPhotos = (req, res) => {
-    let data = {
+const searchPhotos = async (req, res) => {
+    let apiResponse = {
         success: true,
-        images: null
+        message: '',
+        data: null,
+        error: null
+    };
+
+    try {
+        let unsplashApiResponse = await UnsplashServices.searchPhotos(req.query);
+        apiResponse = {
+            success: true,
+            message: "Successful request",
+            data: unsplashApiResponse
+        }
+        res.send(apiResponse);
+    } catch(e) {
+        console.log(e);
+        apiResponse = {
+            success: false,
+            message: "Some error occurred",
+            error: e
+        };
+        res.send(apiResponse);        
     }
-    let searchKeywords = req.query.keywords;
-    let page = req.query.page;
-    unsplash.search.photos(searchKeywords, page, 10)
-        .then(toJson)
-        .then(json => {
-            let images = json.results;
-            res.send({
-                ...data,
-                images
-            });
-        })
-        .catch(e => {
-            res.send(e);
-        })
+    
 }
 
 

@@ -1,25 +1,33 @@
-const axios = require('axios');
 
+const PixabayServices = require('./services/index');
 
 
 const searchPhotos = async (req, res) => {
-    let data = {
+    let responseData = {
         success: true,
-        images: null
-    }
-    let searchKeywords = req.query.keywords;
-    let page = req.query.page;
+        message: '',
+        error: null,
+        data: null
+    };
     try {
-        let apiResponse = await axios.get(`https://pixabay.com/api?key=${process.env.PIXABAY_API_KEY}&q=${searchKeywords}&page=${page}&per_page=10`);
-        let images = apiResponse.data.hits;
-        res.send({
-            ...data,
-            images
-        });
+        let apiResponse = await PixabayServices.searchPhotos(req.query);
+        responseData = {
+            success: true,
+            message: "Image Search successful",
+            data: apiResponse
+        };
+        res.send(responseData);
     }
     catch(e){
-        res.send(e);
+        console.log(e);
+        responseData = {
+            success: false,
+            message: "Some error occurred",
+            error: e
+        };
+        res.send(responseData);
     }
+    
 }
 
 
