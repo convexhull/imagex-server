@@ -1,4 +1,5 @@
 const axios = require("axios");
+const CVServices = require('./services/index');
 
 const uploadImage = async (req, res) => {
   const base64Image = req.file.buffer.toString("base64");
@@ -9,7 +10,7 @@ const uploadImage = async (req, res) => {
   let imageUploadConfig = {
     headers: {
       Authorization: process.env.COMPUTER_VISION_TOKEN,
-    },
+    }
   };
   try {
     let imageUploadResponse = await axios.post(
@@ -27,20 +28,28 @@ const uploadImage = async (req, res) => {
 };
 
 const getSimilarImages = async (req, res) => {
-  let upload_id = req.query.upload_id;
-  let page = req.query.page;
+  let responseData = {
+    success: true,
+    message: '',
+    error: null,
+    data: null
+  };
   try {
-    let similarImagesURL = `https://api.shutterstock.com/v2/cv/similar/images?asset_id=${upload_id}&page=${page}&view=full`;
-    let similarImagesResponse = await axios.get(similarImagesURL, {
-      headers: {
-        Authorization: process.env.COMPUTER_VISION_TOKEN,
-      }
-    });
-    console.log("xxxxxx", similarImagesResponse.data);
-    res.send(similarImagesResponse.data);
+    let apiResponse = await CVServices.getSimilarImages(req.query);
+    responseData = {
+      success: true,
+      message: 'Similar images query successful',
+      data: apiResponse
+    };
+    res.send(responseData);
   } catch (e) {
     console.log(e);
-    res.status(500).send(e.message);
+    responseData = {
+      success: true,
+      message: 'Some error occurred',
+      error: e
+    };
+    res.status(500).send(responseData);
   }
 };
 
