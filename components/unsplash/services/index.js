@@ -24,6 +24,21 @@ const searchPhotos = (payload) => {
 }
 
 
+const getRandomPhoto = async () => {
+    return new Promise( (resolve, reject) => {
+        unsplash.photos.getRandomPhoto({})
+        .then(toJson)
+        .then(json => {
+            resolve(json);
+        })
+        .catch(e => {
+            reject(e);
+        })
+    })
+}
+
+
 module.exports = {
-    searchPhotos
+    searchPhotos,
+    getRandomPhoto
 }

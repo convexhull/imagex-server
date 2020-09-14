@@ -36,7 +36,7 @@ const getSimilarImages = async (req, res) => {
         Authorization: process.env.COMPUTER_VISION_TOKEN,
       }
     });
-
+    console.log("xxxxxx", similarImagesResponse.data);
     res.send(similarImagesResponse.data);
   } catch (e) {
     console.log(e);

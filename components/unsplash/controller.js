@@ -1,23 +1,35 @@
 const UnsplashServices = require('./services/index');
 
 
+const getRandomPhoto = async (req, res) => {
+    let responseData = {
+        success: true,
+        message: '',
+        data: null,
+        error: null
+    };
 
-
-const getRandomPhoto = (req, res) => {
-    unsplash.photos.getRandomPhoto({ orientation: "landscape" })
-        .then(toJson)
-        .then(json => {
-            console.log("zzz", json);
-            res.send(json);
-        })
-        .catch(e => {
-            res.send(e)
-        })
+    try {
+        let apiResponse = await UnsplashServices.getRandomPhoto();
+        responseData = {
+            success: true,
+            message: "Successful",
+            data: apiResponse
+        }
+        res.send(responseData);
+    } catch(e){
+        console.log(e);
+        responseData = {
+            success: false,
+            message: "Some error occurred",
+            error: e
+        }
+    }
 }
 
 
 const searchPhotos = async (req, res) => {
-    let apiResponse = {
+    let responseData = {
         success: true,
         message: '',
         data: null,
@@ -26,20 +38,20 @@ const searchPhotos = async (req, res) => {
 
     try {
         let unsplashApiResponse = await UnsplashServices.searchPhotos(req.query);
-        apiResponse = {
+        responseData = {
             success: true,
             message: "Successful request",
             data: unsplashApiResponse
         }
-        res.send(apiResponse);
+        res.send(responseData);
     } catch(e) {
         console.log(e);
-        apiResponse = {
+        responseData = {
             success: false,
             message: "Some error occurred",
             error: e
         };
-        res.send(apiResponse);        
+        res.send(responseData);        
     }
     
 }
