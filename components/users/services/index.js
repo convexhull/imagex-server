@@ -20,8 +20,8 @@ const createNewUser = async(payload, data) => {
         let existingUser = await dbService.findOneUser(criteria);
         if(!existingUser){
             let password = payload.body.password;
-            let hashedPassword = await Hashing.encryptPassword(password);
-            userObj.password = hashedPassword;
+            // let hashedPassword = await Hashing.encryptPassword(password);
+            // userObj.password = hashedPassword;
             createdUser = await dbService.insertUser(userObj);
             createdUser = createdUser.toObject();
             createdUser.token = AuthUtils.generateAuthToken({email : payload.body.email , userName : payload.body.userName});
@@ -74,10 +74,12 @@ const loginUser = async (payload, data) => {
         else {
             let userPassword = user.password;
             let suppliedPassword = payload.body.password;
-            let passwordMatch = await Hashing.decryptPassword(suppliedPassword, userPassword);
+            let passwordMatch = suppliedPassword === user.password;
+            // let passwordMatch = await Hashing.decryptPassword(suppliedPassword, userPassword);
             if(!passwordMatch){
                 throw new Error("PASSWORD_MISMATCH");
             }
+
             const token = AuthUtils.generateAuthToken({email : user.email , userName : user.userName});
             user = user.toObject();
             user.token = token;
