@@ -27,7 +27,7 @@ const createNewUser = async(payload, data) => {
             createdUser.token = AuthUtils.generateAuthToken({email : payload.body.email , userName : payload.body.userName});
             return createdUser;
         } else {
-            throw new Error("User already exists in the database");
+            throw new Error("USER_ALREADY_EXISTS");
         }
     }
     catch(e){
@@ -76,7 +76,7 @@ const loginUser = async (payload, data) => {
             let suppliedPassword = payload.body.password;
             let passwordMatch = await Hashing.decryptPassword(suppliedPassword, userPassword);
             if(!passwordMatch){
-                throw new Error("PASSWORD_MISMATCH");
+                throw new Error("WRONG_CREDENTIALS");
             }
             const token = AuthUtils.generateAuthToken({email : user.email , userName : user.userName});
             user = user.toObject();

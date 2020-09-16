@@ -24,10 +24,14 @@ const createNewUser = async (req, res) => {
     }
     catch(e){
         console.log(e);
+        switch(e.message){
+            case "USER_ALREADY_EXISTS":
+                res.status(409);
+        }
         res.send({
             ...apiResponse,
             success : false,
-            error : true,
+            error: true,
             message : e.message
         })
     }
@@ -36,28 +40,34 @@ const createNewUser = async (req, res) => {
 
 
 const loginUser = async (req, res) => {
-
     let apiResponse = {
         success : true,
         error : false,
         message : ``,
         data : null
     };
-
     let payload = { ...req };
-
     try {
         let user = await userService.loginUser(payload);
         res.send(user);
     }   
     catch(e){
-        console.log(e);
-        res.status(401).send({
+        switch(e.message){
+            case "EMAIL_DOESNOT_EXIST":
+                res.status(403);
+                break;
+            case "WRONG_CREDENTIALS":
+                res.status(401);
+                break;
+            default:
+                res.status(500);
+        }
+        res.send({
             ...apiResponse,
             success : false,
-            error : true,
+            error: true,
             message : e.message
-        });
+        })
     }
 }
 
