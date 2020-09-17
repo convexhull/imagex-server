@@ -10,7 +10,7 @@ const createNewUser = async(payload, data) => {
         password : payload.body.password,
         firstName: payload.body.firstName,
         lastName: payload.body.lastName,
-        profilePicUrl: "https://www.cornwallbusinessawards.co.uk/wp-content/uploads/2017/11/dummy450x450.jpg"
+        profilePicUrl: "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909__480.png"
     };
     let createdUser = {};
     try {
@@ -25,9 +25,10 @@ const createNewUser = async(payload, data) => {
             createdUser = await dbService.insertUser(userObj);
             createdUser = createdUser.toObject();
             createdUser.token = AuthUtils.generateAuthToken({email : payload.body.email , userName : payload.body.userName});
+            delete createdUser.password;
             return createdUser;
         } else {
-            throw new Error("User already exists in the database");
+            throw new Error("USER_ALREADY_EXISTS");
         }
     }
     catch(e){
@@ -52,6 +53,8 @@ const addFavouriteImage = async (image, user) => {
     };
     try {   
         let updatedUser = await dbService.updateUser(criteria, updateObj, options);
+        updatedUser = updatedUser.toObject();
+        delete updatedUser.password;
         return updatedUser;
     } catch(e) {
         throw e;
@@ -77,7 +80,7 @@ const loginUser = async (payload, data) => {
             let passwordMatch = suppliedPassword === user.password;
             // let passwordMatch = await Hashing.decryptPassword(suppliedPassword, userPassword);
             if(!passwordMatch){
-                throw new Error("PASSWORD_MISMATCH");
+                throw new Error("WRONG_CREDENTIALS");
             }
 
             const token = AuthUtils.generateAuthToken({email : user.email , userName : user.userName});
@@ -152,6 +155,8 @@ const updateUserProfile = async (req) => {
     };
     try {
         let updatedUser = await dbService.updateUser(criteria, updateObj, options);
+        updatedUser = updatedUser.toObject();
+        delete updatedUser.password;
         return updatedUser;
     } catch(e) {
         throw e;
