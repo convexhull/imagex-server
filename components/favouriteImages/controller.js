@@ -1,6 +1,5 @@
 const imageServices = require('./services');
 const userServices = require('../users/services');
-const { response } = require('express');
 
 const saveImage = async (req, res) => {
     let responseData = {
