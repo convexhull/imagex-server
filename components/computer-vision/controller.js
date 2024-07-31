@@ -1,5 +1,5 @@
 const axios = require("axios");
-const CVServices = require('./services/index');
+const CVServices = require("./services/index");
 
 const uploadImage = async (req, res) => {
   const base64Image = req.file.buffer.toString("base64");
@@ -9,8 +9,8 @@ const uploadImage = async (req, res) => {
   };
   let imageUploadConfig = {
     headers: {
-      Authorization: process.env.COMPUTER_VISION_TOKEN,
-    }
+      Authorization: `Bearer ${process.env.COMPUTER_VISION_TOKEN}`,
+    },
   };
   try {
     let imageUploadResponse = await axios.post(
@@ -20,9 +20,10 @@ const uploadImage = async (req, res) => {
     );
     let upload_id = imageUploadResponse.data.upload_id;
     res.send({
-      upload_id
+      upload_id,
     });
   } catch (e) {
+    console.log(e);
     res.status(500).send(e.message);
   }
 };
@@ -30,24 +31,24 @@ const uploadImage = async (req, res) => {
 const getSimilarImages = async (req, res) => {
   let responseData = {
     success: true,
-    message: '',
+    message: "",
     error: null,
-    data: null
+    data: null,
   };
   try {
     let apiResponse = await CVServices.getSimilarImages(req.query);
     responseData = {
       success: true,
-      message: 'Similar images query successful',
-      data: apiResponse
+      message: "Similar images query successful",
+      data: apiResponse,
     };
     res.send(responseData);
   } catch (e) {
     console.log(e);
     responseData = {
       success: true,
-      message: 'Some error occurred',
-      error: e
+      message: "Some error occurred",
+      error: e,
     };
     res.status(500).send(responseData);
   }
