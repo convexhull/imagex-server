@@ -1,10 +1,12 @@
-FROM node:12.18.0-stretch
+FROM node:20
 
-WORKDIR /home/node/app
+WORKDIR /opt/imagex/imagex-server
 
-COPY . .
+COPY package*.json .
 
 RUN yarn install
+
+COPY . .
 
 EXPOSE 4000
 
