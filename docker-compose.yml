@@ -1,8 +1,12 @@
 services:
   backend-service:
+    depends_on:
+      - mongodb-service
     build: .
     ports:
       - 4000:4000
+    environment:
+      - MONGODB_URI=mongodb://mongodb-service:27017/imagex
   mongodb-service:
     image: mongo
     ports:
