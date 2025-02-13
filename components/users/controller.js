@@ -1,3 +1,6 @@
+const {
+  REFRESH_TOKEN_COOKIE_EXPIRATION_TIME,
+} = require("../../utils/constants");
 const userService = require("./services");
 const services = require("./services");
 
@@ -44,6 +47,8 @@ const loginUser = async (req, res) => {
   try {
     let user = await userService.loginUser(payload);
     res.cookie("refreshToken", user.refreshToken, {
+      //TODO: Secure, prod env, etc.
+      maxAge: REFRESH_TOKEN_COOKIE_EXPIRATION_TIME,
       httpOnly: true,
     });
     res.send(user);
@@ -95,6 +100,18 @@ const refreshToken = async (req, res) => {
     };
   }
   res.json(apiResponse);
+};
+
+const logoutUser = async (req, res) => {
+  let responseData = {
+    success: true,
+    error: false,
+    message: ``,
+    data: null,
+  };
+  res.clearCookie("refreshToken");
+  responseData.message = "Logged out successfully";
+  res.status(200).json(responseData);
 };
 
 const getFavouriteImages = async (req, res) => {
@@ -224,6 +241,7 @@ const removeFavouriteImage = async (req, res) => {
 module.exports = {
   createNewUser,
   loginUser,
+  logoutUser,
   refreshToken,
   getFavouriteImages,
   updateUser,

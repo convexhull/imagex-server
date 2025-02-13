@@ -11,6 +11,7 @@ const router = express.Router();
 router
   .post("/signup", userController.createNewUser)
   .post("/login", userController.loginUser)
+  .post("/logout", userController.logoutUser)
   .post("/refresh", userController.refreshToken)
   .get(
     "/favourite-images",
