@@ -25,7 +25,7 @@ const getPhotoById = async (query) => {
       `https://pixabay.com/api?key=${process.env.PIXABAY_API_KEY}&id=${id}`
     );
     console.log(apiResponse.data);
-    return apiResponse.data;
+    return apiResponse.data.hits[0];
   } catch (e) {
     throw e;
   }
