@@ -18,7 +18,11 @@ app.set("view engine", "jade");
 app.use(
   cors({
     // TODO: Production env here
-    origin: "http://localhost:3000",
+    origin: [
+      "http://localhost:3000",
+      "https://yashpratapsingh.com",
+      "http://localhost:3001",
+    ],
     credentials: true,
   })
 );
