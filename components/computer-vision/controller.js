@@ -1,6 +1,34 @@
+const axios = require("axios");
 const CVServices = require("./services/index");
 
-const findSimilarImages = async (req, res) => {
+const uploadImage = async (req, res) => {
+  const base64Image = req.file.buffer.toString("base64");
+  let imageUploadURL = `https://api.shutterstock.com/v2/cv/images`;
+  let imageUploadData = {
+    base64_image: base64Image,
+  };
+  let imageUploadConfig = {
+    headers: {
+      Authorization: `Bearer ${process.env.COMPUTER_VISION_TOKEN}`,
+    },
+  };
+  try {
+    let imageUploadResponse = await axios.post(
+      imageUploadURL,
+      imageUploadData,
+      imageUploadConfig
+    );
+    let upload_id = imageUploadResponse.data.upload_id;
+    res.send({
+      upload_id,
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(500).send(e.message);
+  }
+};
+
+const getSimilarImages = async (req, res) => {
   let responseData = {
     success: true,
     message: "",
@@ -8,10 +36,7 @@ const findSimilarImages = async (req, res) => {
     data: null,
   };
   try {
-    if (!req.query.page) {
-      throw new Error("Page required in query");
-    }
-    let apiResponse = await CVServices.getSimilarImages(req);
+    let apiResponse = await CVServices.getSimilarImages(req.query);
     responseData = {
       success: true,
       message: "Similar images query successful",
@@ -19,16 +44,17 @@ const findSimilarImages = async (req, res) => {
     };
     res.send(responseData);
   } catch (e) {
-    console.log(e.message);
+    console.log(e);
     responseData = {
       success: true,
-      message: e.message,
-      error: e.toString(),
+      message: "Some error occurred",
+      error: e,
     };
     res.status(500).send(responseData);
   }
 };
 
 module.exports = {
-  findSimilarImages,
+  uploadImage,
+  getSimilarImages,
 };
