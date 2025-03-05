@@ -10,6 +10,8 @@ const saveImage = async (payload, user) => {
     largeImageUrl: payload.largeImageUrl,
     downloadUrl: payload.downloadUrl,
     aspect: payload.aspect,
+    width: payload.width,
+    height: payload.height,
   };
   try {
     let savedImage = await db.insertImage(imageToSave);

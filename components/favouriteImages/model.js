@@ -12,6 +12,8 @@ const imageSchema = Schema({
   imageId: { type: String },
   createdAt: { type: Date, default: Date.now },
   aspect: { type: Number },
+  width: { type: Number },
+  height: { type: Number },
 });
 
 module.exports = mongoose.model("Image", imageSchema);
