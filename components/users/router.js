@@ -30,6 +30,7 @@ router
     upload.single("file"),
     userController.updateProfilePic
   )
-  .get("/ownAccountInfo", authenticateToken, userController.getOwnAccountInfo);
+  .get("/ownAccountInfo", authenticateToken, userController.getOwnAccountInfo)
+  .get("/me", authenticateToken, userController.getOwnAccountInfo);
 
 module.exports = router;

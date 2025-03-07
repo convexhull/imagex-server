@@ -51,6 +51,10 @@ const loginUser = async (req, res) => {
       maxAge: REFRESH_TOKEN_COOKIE_EXPIRATION_TIME,
       httpOnly: true,
     });
+    res.cookie("accessToken", user.token, {
+      maxAge: 1 * 30 * 1000,
+      httpOnly: true,
+    });
     res.send(user);
   } catch (e) {
     switch (e.message) {
@@ -84,6 +88,10 @@ const refreshToken = async (req, res) => {
     return res.status(401).json({ message: "No refresh token" });
   try {
     const accessToken = await userService.refreshToken(refreshToken);
+    res.cookie("accessToken", accessToken, {
+      maxAge: 1 * 30 * 1000,
+      httpOnly: true,
+    });
     apiResponse = {
       ...apiResponse,
       message: "Access token generated successfully",
@@ -110,6 +118,7 @@ const logoutUser = async (req, res) => {
     data: null,
   };
   res.clearCookie("refreshToken");
+  res.clearCookie("accessToken");
   responseData.message = "Logged out successfully";
   res.status(200).json(responseData);
 };

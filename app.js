@@ -32,6 +32,14 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
+// app.use(async (req, res, next) => {
+//   await (() =>
+//     new Promise((resolve, reject) => {
+//       setTimeout(() => resolve(1), 2000);
+//     }))();
+//   next();
+// });
+
 app.use("/", indexRouter);
 
 // catch 404 and forward to error handler

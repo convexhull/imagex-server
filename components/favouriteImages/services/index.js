@@ -4,7 +4,6 @@ const saveImage = async (payload, user) => {
   let imageToSave = {
     platform: payload.platform,
     imageId: payload.imageId,
-    pageUrl: payload.pageUrl,
     smallImageUrl: payload.smallImageUrl,
     mediumImageUrl: payload.mediumImageUrl,
     largeImageUrl: payload.largeImageUrl,
