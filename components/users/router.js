@@ -4,7 +4,7 @@ const multer = require("multer");
 const upload = multer();
 
 const userController = require("./controller");
-const { authenticateToken } = require("../../middlewares/middleware");
+const { authenticateTokenV2 } = require("../../middlewares/middleware");
 
 const router = express.Router();
 
@@ -15,22 +15,22 @@ router
   .post("/refresh", userController.refreshToken)
   .get(
     "/favourite-images",
-    authenticateToken,
+    authenticateTokenV2,
     userController.getFavouriteImages
   )
   .delete(
     "/removeFavouriteImage",
-    authenticateToken,
+    authenticateTokenV2,
     userController.removeFavouriteImage
   )
-  .patch("/update", authenticateToken, userController.updateUser)
+  .patch("/update", authenticateTokenV2, userController.updateUser)
   .post(
     "/updateProfilePic",
-    authenticateToken,
+    authenticateTokenV2,
     upload.single("file"),
     userController.updateProfilePic
   )
-  .get("/ownAccountInfo", authenticateToken, userController.getOwnAccountInfo)
-  .get("/me", authenticateToken, userController.getOwnAccountInfo);
+  .get("/ownAccountInfo", authenticateTokenV2, userController.getOwnAccountInfo)
+  .get("/me", authenticateTokenV2, userController.getOwnAccountInfo);
 
 module.exports = router;
