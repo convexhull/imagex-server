@@ -22,6 +22,7 @@ app.use(
       "http://localhost:3000",
       "https://yashpratapsingh.com",
       "http://localhost:3001",
+      "https://imagex-nextjs-frontend.vercel.app/",
     ],
     credentials: true,
   })
