@@ -19,14 +19,18 @@ app.use(
   cors({
     // TODO: Production env here
     origin: [
-      "http://localhost:3000",
-      "https://yashpratapsingh.com",
-      "http://localhost:3001",
-      "https://imagex-nextjs-frontend.vercel.app",
+      // "http://localhost:3000",
+      // "https://yashpratapsingh.com",
+      // "http://localhost:3001",
+      "https://imagex-nextjs-frontend.vercel.app/",
     ],
     credentials: true,
   })
 );
+app.use((req, res, next) => {
+  console.log("CORS Headers:", res.getHeaders());
+  next();
+});
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
