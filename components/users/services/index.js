@@ -87,10 +87,12 @@ const loginUser = async (payload, data) => {
       const token = AuthUtils.generateAuthToken({
         email: user.email,
         userName: user.userName,
+        _id: user._id,
       });
       const refreshToken = AuthUtils.generateRefreshToken({
         email: user.email,
         userName: user.userName,
+        _id: user._id,
       });
       user = user.toObject();
       user.token = token;
@@ -104,23 +106,33 @@ const loginUser = async (payload, data) => {
 };
 
 const refreshToken = async (refreshToken) => {
-  let newAccessToken = "";
-  try {
+  return new Promise((resolve, reject) => {
+    let user = {};
     jwt.verify(
       refreshToken,
       process.env.JWT_REFRESH_TOKEN_SECRET,
-      (err, decoded) => {
+      async (err, decoded) => {
         if (err) {
-          throw new Error("Invalid refresh token");
+          return reject(new Error("INVALID_REFRESH_TOKEN"));
         }
-        const { email, userName } = decoded;
-        newAccessToken = AuthUtils.generateAuthToken({ email, userName });
+        const { email, userName, _id } = decoded;
+        const criteria = { email };
+        user = await dbService.findOneUser(criteria);
+        if (!user) {
+          return reject(new Error("No user found"));
+        }
+        user = user.toObject();
+        newAccessToken = AuthUtils.generateAuthToken({
+          email,
+          userName,
+          _id,
+        });
+        user.accessToken = newAccessToken;
+        delete user.password;
+        resolve(user);
       }
     );
-    return newAccessToken;
-  } catch (e) {
-    throw e;
-  }
+  });
 };
 
 const getFavouriteImages = async (user) => {

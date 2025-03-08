@@ -1,5 +1,6 @@
 const {
   REFRESH_TOKEN_COOKIE_EXPIRATION_TIME,
+  ACCESS_TOKEN_COOKIE_EXPIRATION_TIME,
 } = require("../../utils/constants");
 const userService = require("./services");
 const services = require("./services");
@@ -52,9 +53,11 @@ const loginUser = async (req, res) => {
       httpOnly: true,
     });
     res.cookie("accessToken", user.token, {
-      maxAge: 1 * 30 * 1000,
+      maxAge: ACCESS_TOKEN_COOKIE_EXPIRATION_TIME,
       httpOnly: true,
     });
+    delete user.token;
+    delete user.refreshToken;
     res.send(user);
   } catch (e) {
     switch (e.message) {
@@ -87,19 +90,22 @@ const refreshToken = async (req, res) => {
   if (!refreshToken)
     return res.status(401).json({ message: "No refresh token" });
   try {
-    const accessToken = await userService.refreshToken(refreshToken);
-    res.cookie("accessToken", accessToken, {
-      maxAge: 1 * 30 * 1000,
+    const session = await userService.refreshToken(refreshToken);
+    res.cookie("accessToken", session.accessToken, {
+      maxAge: ACCESS_TOKEN_COOKIE_EXPIRATION_TIME,
       httpOnly: true,
     });
+    delete session.accessToken;
     apiResponse = {
       ...apiResponse,
       message: "Access token generated successfully",
-      data: {
-        accessToken,
-      },
+      data: session,
     };
   } catch (e) {
+    if (e.message === "INVALID_REFRESH_TOKEN") {
+      res.clearCookie("refreshToken");
+      res.clearCookie("accessToken");
+    }
     apiResponse = {
       ...apiResponse,
       success: false,
