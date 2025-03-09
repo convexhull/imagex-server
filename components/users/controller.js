@@ -4,6 +4,7 @@ const {
 } = require("../../utils/constants");
 const userService = require("./services");
 const services = require("./services");
+const getCookiesOptions = require("../../utils/cookies");
 
 const createNewUser = async (req, res) => {
   let apiResponse = {
@@ -47,15 +48,16 @@ const loginUser = async (req, res) => {
   let payload = { ...req };
   try {
     let user = await userService.loginUser(payload);
-    res.cookie("refreshToken", user.refreshToken, {
-      //TODO: Secure, prod env, etc.
-      maxAge: REFRESH_TOKEN_COOKIE_EXPIRATION_TIME,
-      httpOnly: true,
-    });
-    res.cookie("accessToken", user.token, {
-      maxAge: ACCESS_TOKEN_COOKIE_EXPIRATION_TIME,
-      httpOnly: true,
-    });
+    res.cookie(
+      "refreshToken",
+      user.refreshToken,
+      getCookiesOptions(REFRESH_TOKEN_COOKIE_EXPIRATION_TIME)
+    );
+    res.cookie(
+      "accessToken",
+      user.token,
+      getCookiesOptions(ACCESS_TOKEN_COOKIE_EXPIRATION_TIME)
+    );
     delete user.token;
     delete user.refreshToken;
     res.send(user);
@@ -91,10 +93,11 @@ const refreshToken = async (req, res) => {
     return res.status(401).json({ message: "No refresh token" });
   try {
     const session = await userService.refreshToken(refreshToken);
-    res.cookie("accessToken", session.accessToken, {
-      maxAge: ACCESS_TOKEN_COOKIE_EXPIRATION_TIME,
-      httpOnly: true,
-    });
+    res.cookie(
+      "accessToken",
+      session.accessToken,
+      getCookiesOptions(ACCESS_TOKEN_COOKIE_EXPIRATION_TIME)
+    );
     delete session.accessToken;
     apiResponse = {
       ...apiResponse,
