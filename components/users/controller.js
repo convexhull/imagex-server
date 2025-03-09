@@ -106,8 +106,8 @@ const refreshToken = async (req, res) => {
     };
   } catch (e) {
     if (e.message === "INVALID_REFRESH_TOKEN") {
-      res.clearCookie("refreshToken");
-      res.clearCookie("accessToken");
+      res.clearCookie("refreshToken", getCookiesOptions());
+      res.clearCookie("accessToken", getCookiesOptions());
     }
     apiResponse = {
       ...apiResponse,
@@ -126,8 +126,8 @@ const logoutUser = async (req, res) => {
     message: ``,
     data: null,
   };
-  res.clearCookie("refreshToken");
-  res.clearCookie("accessToken");
+  res.clearCookie("refreshToken", getCookiesOptions());
+  res.clearCookie("accessToken", getCookiesOptions());
   responseData.message = "Logged out successfully";
   res.status(200).json(responseData);
 };
