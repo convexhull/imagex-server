@@ -15,18 +15,25 @@ var app = express();
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "jade");
 
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://imagex.yashpratapsingh.com",
+];
+
 app.use(
   cors({
     // TODO: Production env here
-    origin: [
-      // "http://localhost:3000",
-      // "https://yashpratapsingh.com",
-      // "http://localhost:3001",
-      "https://imagex-nextjs-frontend.vercel.app/",
-    ],
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, origin);
+      } else {
+        callback(new Errror("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
+
 app.use((req, res, next) => {
   console.log("CORS Headers:", res.getHeaders());
   next();
