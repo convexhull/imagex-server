@@ -31,6 +31,11 @@ router
     userController.updateProfilePic
   )
   .get("/ownAccountInfo", authenticateTokenV2, userController.getOwnAccountInfo)
-  .get("/me", authenticateTokenV2, userController.getOwnAccountInfo);
+  .get("/me", authenticateTokenV2, userController.getOwnAccountInfo)
+  .get(
+    "/favourite-image",
+    authenticateTokenV2,
+    userController.getFavouriteImage
+  );
 
 module.exports = router;

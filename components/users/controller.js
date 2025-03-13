@@ -132,6 +132,32 @@ const logoutUser = async (req, res) => {
   res.status(200).json(responseData);
 };
 
+const getFavouriteImage = async (req, res) => {
+  let responseData = {
+    success: true,
+    error: false,
+    message: ``,
+    data: null,
+  };
+  try {
+    if (!req.query.imageId) throw new Error("No imageId provided");
+    let favouriteImages = await services.getFavouriteImage(
+      req.user,
+      req.query.imageId
+    );
+    responseData.data = favouriteImages;
+    responseData.message = "Images fetched successfully";
+    res.send(responseData);
+  } catch (e) {
+    responseData = {
+      success: false,
+      error: true,
+      message: "Some error occurred",
+    };
+    res.status(500).send(responseData);
+  }
+};
+
 const getFavouriteImages = async (req, res) => {
   let responseData = {
     success: true,
@@ -266,4 +292,5 @@ module.exports = {
   updateProfilePic,
   getOwnAccountInfo,
   removeFavouriteImage,
+  getFavouriteImage,
 };

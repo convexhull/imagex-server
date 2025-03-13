@@ -135,6 +135,37 @@ const refreshToken = async (refreshToken) => {
   });
 };
 
+const getFavouriteImage = async (user, imageId) => {
+  //TODO: Improve schema or query
+  let aggregationPipeline = [
+    {
+      $match: {
+        email: user.email,
+      },
+    },
+    {
+      $lookup: {
+        from: "images",
+        localField: "favouriteImages",
+        foreignField: "_id",
+        as: "favouriteImages",
+      },
+    },
+  ];
+  try {
+    let result = await dbService.aggregateUsers(aggregationPipeline);
+    let images = result[0].favouriteImages;
+    const image = images.find((image) => image._id.toString() === imageId);
+    if (!image) {
+      throw new Error(`No image with imageId: ${imageId}`);
+    }
+    return image;
+  } catch (e) {
+    console.log(e);
+    throw e;
+  }
+};
+
 const getFavouriteImages = async (user) => {
   let aggregationPipeline = [
     {
@@ -269,4 +300,5 @@ module.exports = {
   updateProfilePic,
   getOwnAccountInfo,
   removeFavouriteImage,
+  getFavouriteImage,
 };
