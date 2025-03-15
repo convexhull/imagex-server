@@ -5,8 +5,9 @@ services:
     build: .
     ports:
       - 4000:4000
-    environment:
-      - MONGODB_URI=mongodb://mongodb-service:27017/imagex
+    # environment:
+    # Disable since we don't use mongod. Using mongodb-atlas via .env
+    #   - MONGODB_URI=mongodb://mongodb-service:27017/imagex
   mongodb-service:
     image: mongo
     ports:
