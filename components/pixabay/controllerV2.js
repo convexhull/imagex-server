@@ -1,55 +1,38 @@
 const PixabayServices = require("./services/index");
 
-const searchPhotos = async (req, res) => {
-  let responseData = {
-    success: true,
-    message: "",
-    error: null,
-    data: null,
-  };
+const searchPhotos = async (req, res, next) => {
   try {
-    let apiResponse = await PixabayServices.searchPhotos(req.query);
-    responseData = {
-      success: true,
-      message: "Image Search successful",
-      data: apiResponse,
+    const apiResponse = await PixabayServices.searchPhotos(req.query);
+    const responseData = {
+      status: "success",
+      data: {
+        meta_data: {
+          total: apiResponse.total,
+          totalHits: apiResponse.totalHits,
+          moreResults: apiResponse.moreResults,
+        },
+        images: apiResponse.hits,
+      },
     };
-    res.send(responseData);
-  } catch (e) {
-    console.log(e);
-    responseData = {
-      success: false,
-      message: "Some error occurred",
-      error: e,
-    };
-    res.send(responseData);
+    res.json(responseData);
+  } catch (err) {
+    next(err);
   }
 };
 
-const getPhoto = async (req, res) => {
-  //TODO: Fix not found, invalid id
-  let responseData = {
-    success: true,
-    message: "",
-    error: null,
-    data: null,
-  };
+const getPhoto = async (req, res, next) => {
+  //TODO: Fix not found, invalid id in all routes
   try {
-    let apiResponse = await PixabayServices.getPhotoById(req.query);
-    responseData = {
-      success: true,
-      message: "Image fetched successfully",
-      data: apiResponse,
+    const apiResponse = await PixabayServices.getPhotoById(req.query);
+    const responseData = {
+      status: "success",
+      data: {
+        image: apiResponse,
+      },
     };
-    res.send(responseData);
-  } catch (e) {
-    console.log(e);
-    responseData = {
-      success: false,
-      message: "Some error occurred",
-      error: e,
-    };
-    res.status(500).send(responseData);
+    res.json(responseData);
+  } catch (err) {
+    next(err);
   }
 };
 

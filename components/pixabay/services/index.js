@@ -8,7 +8,7 @@ const searchPhotos = async (payload) => {
     let apiResponse = await axios.get(
       `https://pixabay.com/api?key=${process.env.PIXABAY_API_KEY}&q=${searchKeywords}&page=${page}&per_page=${per_page}`
     );
-    let apiResponseData = apiResponse.data;
+    const apiResponseData = apiResponse.data;
     let totalPages = Math.ceil(apiResponseData.totalHits / per_page);
     let moreResults = totalPages <= page ? false : true;
     apiResponseData.moreResults = moreResults;
@@ -24,7 +24,6 @@ const getPhotoById = async (query) => {
     let apiResponse = await axios.get(
       `https://pixabay.com/api?key=${process.env.PIXABAY_API_KEY}&id=${id}`
     );
-    console.log(apiResponse.data);
     return apiResponse.data.hits[0];
   } catch (e) {
     throw e;
