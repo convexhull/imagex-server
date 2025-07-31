@@ -1,11 +1,9 @@
 const express = require("express");
 const multer = require("multer");
+const { authenticateTokenV2 } = require("../../middlewares/middleware");
+const userController = require("./controllerV2");
 
 const upload = multer();
-
-const userController = require("./controller");
-const { authenticateTokenV2 } = require("../../middlewares/middleware");
-
 const router = express.Router();
 
 router
