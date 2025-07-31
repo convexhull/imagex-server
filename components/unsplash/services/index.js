@@ -1,7 +1,6 @@
 const Unsplash = require("unsplash-js").default;
 const { toJson } = require("unsplash-js");
-const fetch = require("node-fetch");
-global.fetch = fetch;
+const axios = require("axios");
 
 const unsplash = new Unsplash({
   accessKey: process.env.UNSPLASH_API_ACCESS_KEY,
@@ -39,14 +38,14 @@ const getRandomPhoto = async () => {
 };
 
 const getPhotoById = async (payload) => {
-  const id = payload.id;
+  const { id } = payload;
   try {
-    const response = await fetch(`https://api.unsplash.com/photos/${id}`, {
+    const response = await axios.get(`https://api.unsplash.com/photos/${id}`, {
       headers: {
         Authorization: `Client-ID ${process.env.UNSPLASH_API_ACCESS_KEY}`,
       },
     });
-    const data = await response.json();
+    const data = response.data;
     return data;
   } catch (e) {
     throw e;
