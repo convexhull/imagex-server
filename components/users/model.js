@@ -10,6 +10,7 @@ const UserSchema = Schema({
     type: String,
     required: true,
     minlength: [8, "Password should be atleast 8 characters long"],
+    select: false,
   },
   passwordConfirm: {
     type: String,
@@ -35,5 +36,13 @@ UserSchema.pre("save", async function () {
     this.passwordConfirm = undefined;
   }
 });
+
+UserSchema.methods.checkCorrectPassword = async function (candidatePassword) {
+  const isPasswordMatching = await Hashing.decryptPassword(
+    candidatePassword,
+    this.password
+  );
+  return isPasswordMatching;
+};
 
 module.exports = mongoose.model("User", UserSchema);

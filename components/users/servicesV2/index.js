@@ -1,15 +1,16 @@
 const dbService = require("./db.service");
 const AuthUtils = require("../../../utils/auth");
 const cloudinary = require("../../../utils/cloudinary");
-const Hashing = require("../../../utils/hash");
 const jwt = require("jsonwebtoken");
+const User = require("../model");
+const { AppError } = require("../../../utils/error");
 
 const PROFILE_PIC_PLACEHOLDER =
   "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909__480.png";
 
-const createNewUser = async (req) => {
+const createNewUser = async (payload) => {
   const { email, userName, firstName, password, lastName, passwordConfirm } =
-    req.body;
+    payload.body;
   const userObj = {
     email,
     userName,
@@ -21,6 +22,7 @@ const createNewUser = async (req) => {
   };
 
   const createdUser = await dbService.insertUser(userObj);
+  createdUser.password = undefined;
   return createdUser;
 };
 
@@ -47,44 +49,34 @@ const addFavouriteImage = async (image, user) => {
   }
 };
 
-const loginUser = async (payload, data) => {
-  let criteria = {
-    email: payload.body.email,
+const loginUser = async (payload) => {
+  const { email, password } = payload.body;
+  const criteria = {
+    email,
   };
-  let user = {};
-  try {
-    user = await dbService.findOneUser(criteria);
-    if (!user) {
-      throw new Error("EMAIL_DOESNOT_EXIST");
-    } else {
-      let userPassword = user.password;
-      let suppliedPassword = payload.body.password;
-      let passwordMatch = await Hashing.decryptPassword(
-        suppliedPassword,
-        userPassword
-      );
-      if (!passwordMatch) {
-        throw new Error("WRONG_CREDENTIALS");
-      }
-      const token = AuthUtils.generateAuthToken({
-        email: user.email,
-        userName: user.userName,
-        _id: user._id,
-      });
-      const refreshToken = AuthUtils.generateRefreshToken({
-        email: user.email,
-        userName: user.userName,
-        _id: user._id,
-      });
-      user = user.toObject();
-      user.token = token;
-      user.refreshToken = refreshToken;
-      delete user.password;
-      return user;
-    }
-  } catch (e) {
-    throw e;
+  let user = await User.findOne(criteria).select("+password");
+  const candidatePassword = password;
+
+  if (!user || !(await user.checkCorrectPassword(candidatePassword))) {
+    throw new AppError("WRONG_CREDENTIALS OR EMAIL_DOESNOT_EXIST", 401);
   }
+
+  const token = AuthUtils.generateAuthToken({
+    email: user.email,
+    userName: user.userName,
+    _id: user._id,
+  });
+
+  const refreshToken = AuthUtils.generateRefreshToken({
+    email: user.email,
+    userName: user.userName,
+    _id: user._id,
+  });
+
+  user.token = token;
+  user.refreshToken = refreshToken;
+  user.password = undefined;
+  return user;
 };
 
 const refreshToken = async (refreshToken) => {
