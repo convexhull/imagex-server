@@ -2,7 +2,7 @@ const {
   REFRESH_TOKEN_COOKIE_EXPIRATION_TIME,
   ACCESS_TOKEN_COOKIE_EXPIRATION_TIME,
 } = require("../../utils/constants");
-const userService = require("./services");
+const userService = require("./servicesV2");
 const services = require("./services");
 const getCookiesOptions = require("../../utils/cookies");
 
@@ -18,17 +18,6 @@ const createNewUser = async (req, res, next) => {
     };
     res.json(responseData);
   } catch (err) {
-    //TODO: Handle these
-    // switch (e.message) {
-    //   case "USER_ALREADY_EXISTS":
-    //     res.status(409);
-    // }
-    // res.send({
-    //   ...apiResponse,
-    //   success: false,
-    //   error: true,
-    //   message: e.message,
-    // });
     next(err);
   }
 };
