@@ -34,6 +34,14 @@ const createNewUser = async (payload) => {
   return createdUser;
 };
 
+const filterUpdateObj = (obj, allowedFields) => {
+  const updateObj = {};
+  Object.keys(obj).forEach((key) => {
+    if (allowedFields.includes(key)) updateObj[key] = obj[key];
+  });
+  return updateObj;
+};
+
 const addFavouriteImage = async (image, user) => {
   let criteria = {
     email: user.email,
@@ -47,14 +55,10 @@ const addFavouriteImage = async (image, user) => {
     new: true,
     upsert: true,
   };
-  try {
-    let updatedUser = await dbService.updateUser(criteria, updateObj, options);
-    updatedUser = updatedUser.toObject();
-    delete updatedUser.password;
-    return updatedUser;
-  } catch (e) {
-    throw e;
-  }
+  let updatedUser = await dbService.updateUser(criteria, updateObj, options);
+  updatedUser = updatedUser.toObject();
+  delete updatedUser.password;
+  return updatedUser;
 };
 
 const loginUser = async (payload) => {
@@ -104,7 +108,7 @@ const refreshToken = async (refreshToken) => {
           return reject(new Error("No user found"));
         }
         user = user.toObject();
-        newAccessToken = AuthUtils.generateAuthToken({
+        const newAccessToken = AuthUtils.generateAuthToken({
           email,
           userName,
           _id,
@@ -134,18 +138,13 @@ const getFavouriteImage = async (user, imageId) => {
       },
     },
   ];
-  try {
-    let result = await dbService.aggregateUsers(aggregationPipeline);
-    let images = result[0].favouriteImages;
-    const image = images.find((image) => image._id.toString() === imageId);
-    if (!image) {
-      throw new Error(`No image with imageId: ${imageId}`);
-    }
-    return image;
-  } catch (e) {
-    console.log(e);
-    throw e;
+  let result = await dbService.aggregateUsers(aggregationPipeline);
+  let images = result[0].favouriteImages;
+  const image = images.find((image) => image._id.toString() === imageId);
+  if (!image) {
+    throw new Error(`No image with imageId: ${imageId}`);
   }
+  return image;
 };
 
 const getFavouriteImages = async (user) => {
@@ -164,14 +163,9 @@ const getFavouriteImages = async (user) => {
       },
     },
   ];
-  try {
-    let result = await dbService.aggregateUsers(aggregationPipeline);
-    let images = result[0].favouriteImages;
-    return images;
-  } catch (e) {
-    console.log(e);
-    throw e;
-  }
+  let result = await dbService.aggregateUsers(aggregationPipeline);
+  let images = result[0].favouriteImages;
+  return images;
 };
 
 const updateUserProfile = async (req) => {
@@ -204,14 +198,10 @@ const updateUserProfile = async (req) => {
   let options = {
     new: true,
   };
-  try {
-    let updatedUser = await dbService.updateUser(criteria, updateObj, options);
-    updatedUser = updatedUser.toObject();
-    delete updatedUser.password;
-    return updatedUser;
-  } catch (e) {
-    throw e;
-  }
+  let updatedUser = await dbService.updateUser(criteria, updateObj, options);
+  updatedUser = updatedUser.toObject();
+  delete updatedUser.password;
+  return updatedUser;
 };
 
 const updateProfilePic = async (image, user) => {
@@ -219,33 +209,25 @@ const updateProfilePic = async (image, user) => {
     email: user.email,
   };
   const base64Image = image.buffer.toString("base64");
-  try {
-    let cloudinaryResponse = await cloudinary.uploadToCloud(base64Image);
-    let updateObj = {
-      $set: {
-        profilePicUrl: cloudinaryResponse.url,
-      },
-    };
-    let options = {
-      new: true,
-    };
-    let updatedUser = await dbService.updateUser(criteria, updateObj, options);
-    return updatedUser;
-  } catch (e) {
-    throw e;
-  }
+  let cloudinaryResponse = await cloudinary.uploadToCloud(base64Image);
+  let updateObj = {
+    $set: {
+      profilePicUrl: cloudinaryResponse.url,
+    },
+  };
+  let options = {
+    new: true,
+  };
+  let updatedUser = await dbService.updateUser(criteria, updateObj, options);
+  return updatedUser;
 };
 
-const getOwnAccountInfo = async (user) => {
+const getOwnAccountInfo = async (currentUser) => {
   let criteria = {
-    email: user.email,
+    email: currentUser.email,
   };
-  try {
-    let user = await dbService.findOneUser(criteria);
-    return user;
-  } catch (e) {
-    throw e;
-  }
+  const user = await dbService.findOneUser(criteria);
+  return user;
 };
 
 const removeFavouriteImage = async (payload, user) => {
@@ -260,16 +242,24 @@ const removeFavouriteImage = async (payload, user) => {
   let options = {
     new: true,
   };
-  try {
-    let updatedUser = await dbService.updateUser(
-      criteria,
-      updateObject,
-      options
-    );
-    return updatedUser;
-  } catch (e) {
-    throw e;
-  }
+  let updatedUser = await dbService.updateUser(criteria, updateObject, options);
+  return updatedUser;
+};
+
+const updateMe = async (currentUser, payload) => {
+  const updateObj = { ...payload };
+  const filteredUpdateObj = filterUpdateObj(updateObj, [
+    "firstName",
+    "lastName",
+    "userName",
+  ]);
+  const updatedUser = await User.findByIdAndUpdate(
+    currentUser._id,
+    filteredUpdateObj,
+    { new: true, runValidators: true }
+  );
+  console.log(filteredUpdateObj, { updatedUser });
+  return updatedUser;
 };
 
 module.exports = {
@@ -283,4 +273,5 @@ module.exports = {
   getOwnAccountInfo,
   removeFavouriteImage,
   getFavouriteImage,
+  updateMe,
 };

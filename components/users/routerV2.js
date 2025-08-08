@@ -12,8 +12,13 @@ router
   .post("/logout", userController.logoutUser)
   .post("/refresh", userController.refreshToken)
   .get("/me", authenticateTokenV2, userController.getOwnAccountInfo)
-  .patch("/update-password", authenticateTokenV2, authController.updatePassword)
+  .patch(
+    "/update-my-password",
+    authenticateTokenV2,
+    authController.updatePassword
+  )
   .patch("/update", authenticateTokenV2, userController.updateUser)
+  .patch("/update-me", authenticateTokenV2, userController.updateMe)
   .patch(
     "/profile-picture",
     authenticateTokenV2,

@@ -5,6 +5,7 @@ const {
 const userService = require("./servicesV2");
 const services = require("./services");
 const getCookiesOptions = require("../../utils/cookies");
+const { AppError } = require("../../utils/error");
 
 const createNewUser = async (req, res, next) => {
   const payload = { ...req };
@@ -210,6 +211,24 @@ const removeFavouriteImage = async (req, res, next) => {
   }
 };
 
+const updateMe = async (req, res, next) => {
+  if (req.body.password || req.body.passwordConfirm) {
+    return next(
+      new AppError(
+        "This route is not for password updation. Please use /update-my-password",
+        400
+      )
+    );
+  }
+  const updatedUser = await userService.updateMe(req.user, req.body);
+  res.json({
+    status: "success",
+    data: {
+      user: updatedUser,
+    },
+  });
+};
+
 module.exports = {
   createNewUser,
   loginUser,
@@ -221,4 +240,5 @@ module.exports = {
   getOwnAccountInfo,
   removeFavouriteImage,
   getFavouriteImage,
+  updateMe,
 };
