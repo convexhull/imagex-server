@@ -28,6 +28,12 @@ const UserSchema = Schema({
   profilePicUrl: { type: String },
   favouriteImages: [{ type: Schema.Types.ObjectId }],
   bio: { type: String },
+  passwordChangedAt: Date,
+  role: {
+    type: String,
+    enum: ["MEMBER", "ADMIN"],
+    default: "MEMBER",
+  },
 });
 
 UserSchema.pre("save", async function () {
@@ -36,6 +42,14 @@ UserSchema.pre("save", async function () {
     this.passwordConfirm = undefined;
   }
 });
+
+UserSchema.methods.hasChangedPasswordAfter = function (jwtTimestamp) {
+  if (this.passwordChangedAt) {
+    console.log(this.passwordChangedAt.getTime(), jwtTimestamp);
+    return jwtTimestamp < this.passwordChangedAt.getTime() / 1000;
+  }
+  return false;
+};
 
 UserSchema.methods.checkCorrectPassword = async function (candidatePassword) {
   const isPasswordMatching = await Hashing.decryptPassword(

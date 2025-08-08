@@ -9,8 +9,15 @@ const PROFILE_PIC_PLACEHOLDER =
   "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909__480.png";
 
 const createNewUser = async (payload) => {
-  const { email, userName, firstName, password, lastName, passwordConfirm } =
-    payload.body;
+  const {
+    email,
+    userName,
+    firstName,
+    password,
+    lastName,
+    passwordConfirm,
+    passwordChangedAt,
+  } = payload.body;
   const userObj = {
     email,
     userName,
@@ -19,6 +26,7 @@ const createNewUser = async (payload) => {
     passwordConfirm,
     lastName,
     profilePicUrl: PROFILE_PIC_PLACEHOLDER,
+    passwordChangedAt,
   };
 
   const createdUser = await dbService.insertUser(userObj);
