@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken");
 const PROFILE_PIC_PLACEHOLDER =
   "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909__480.png";
 
-const createNewUser = async (payload, data) => {
+const createNewUser = async (payload) => {
   let userObj = {
     email: payload.body.email,
     userName: payload.body.userName,
@@ -17,28 +17,24 @@ const createNewUser = async (payload, data) => {
     profilePicUrl: PROFILE_PIC_PLACEHOLDER,
   };
   let createdUser = {};
-  try {
-    let criteria = {
+  let criteria = {
+    email: payload.body.email,
+  };
+  let existingUser = await dbService.findOneUser(criteria);
+  if (!existingUser) {
+    let password = payload.body.password;
+    let hashedPassword = await Hashing.encryptPassword(password);
+    userObj.password = hashedPassword;
+    createdUser = await dbService.insertUser(userObj);
+    createdUser = createdUser.toObject();
+    createdUser.token = AuthUtils.generateAuthToken({
       email: payload.body.email,
-    };
-    let existingUser = await dbService.findOneUser(criteria);
-    if (!existingUser) {
-      let password = payload.body.password;
-      let hashedPassword = await Hashing.encryptPassword(password);
-      userObj.password = hashedPassword;
-      createdUser = await dbService.insertUser(userObj);
-      createdUser = createdUser.toObject();
-      createdUser.token = AuthUtils.generateAuthToken({
-        email: payload.body.email,
-        userName: payload.body.userName,
-      });
-      delete createdUser.password;
-      return createdUser;
-    } else {
-      throw new Error("USER_ALREADY_EXISTS");
-    }
-  } catch (e) {
-    throw e;
+      userName: payload.body.userName,
+    });
+    delete createdUser.password;
+    return createdUser;
+  } else {
+    throw new Error("USER_ALREADY_EXISTS");
   }
 };
 
@@ -55,53 +51,45 @@ const addFavouriteImage = async (image, user) => {
     new: true,
     upsert: true,
   };
-  try {
-    let updatedUser = await dbService.updateUser(criteria, updateObj, options);
-    updatedUser = updatedUser.toObject();
-    delete updatedUser.password;
-    return updatedUser;
-  } catch (e) {
-    throw e;
-  }
+  let updatedUser = await dbService.updateUser(criteria, updateObj, options);
+  updatedUser = updatedUser.toObject();
+  delete updatedUser.password;
+  return updatedUser;
 };
 
-const loginUser = async (payload, data) => {
+const loginUser = async (payload) => {
   let criteria = {
     email: payload.body.email,
   };
   let user = {};
-  try {
-    user = await dbService.findOneUser(criteria);
-    if (!user) {
-      throw new Error("EMAIL_DOESNOT_EXIST");
-    } else {
-      let userPassword = user.password;
-      let suppliedPassword = payload.body.password;
-      let passwordMatch = await Hashing.decryptPassword(
-        suppliedPassword,
-        userPassword
-      );
-      if (!passwordMatch) {
-        throw new Error("WRONG_CREDENTIALS");
-      }
-      const token = AuthUtils.generateAuthToken({
-        email: user.email,
-        userName: user.userName,
-        _id: user._id,
-      });
-      const refreshToken = AuthUtils.generateRefreshToken({
-        email: user.email,
-        userName: user.userName,
-        _id: user._id,
-      });
-      user = user.toObject();
-      user.token = token;
-      user.refreshToken = refreshToken;
-      delete user.password;
-      return user;
+  user = await dbService.findOneUser(criteria);
+  if (!user) {
+    throw new Error("EMAIL_DOESNOT_EXIST");
+  } else {
+    let userPassword = user.password;
+    let suppliedPassword = payload.body.password;
+    let passwordMatch = await Hashing.decryptPassword(
+      suppliedPassword,
+      userPassword
+    );
+    if (!passwordMatch) {
+      throw new Error("WRONG_CREDENTIALS");
     }
-  } catch (e) {
-    throw e;
+    const token = AuthUtils.generateAuthToken({
+      email: user.email,
+      userName: user.userName,
+      _id: user._id,
+    });
+    const refreshToken = AuthUtils.generateRefreshToken({
+      email: user.email,
+      userName: user.userName,
+      _id: user._id,
+    });
+    user = user.toObject();
+    user.token = token;
+    user.refreshToken = refreshToken;
+    delete user.password;
+    return user;
   }
 };
 
@@ -122,7 +110,7 @@ const refreshToken = async (refreshToken) => {
           return reject(new Error("No user found"));
         }
         user = user.toObject();
-        newAccessToken = AuthUtils.generateAuthToken({
+        const newAccessToken = AuthUtils.generateAuthToken({
           email,
           userName,
           _id,
@@ -204,14 +192,8 @@ const updateUserProfile = async (req) => {
   if (req.body.lastName) {
     valuesToSet.lastName = req.body.lastName;
   }
-  // if(req.body.email){
-  //     valuesToSet.email = req.body.email;
-  // }
   if (req.body.userName) {
     valuesToSet.userName = req.body.userName;
-  }
-  if (req.body.password) {
-    valuesToSet.password = req.body.password;
   }
   if (req.body.bio) {
     valuesToSet.bio = req.body.bio;
@@ -222,14 +204,10 @@ const updateUserProfile = async (req) => {
   let options = {
     new: true,
   };
-  try {
-    let updatedUser = await dbService.updateUser(criteria, updateObj, options);
-    updatedUser = updatedUser.toObject();
-    delete updatedUser.password;
-    return updatedUser;
-  } catch (e) {
-    throw e;
-  }
+  let updatedUser = await dbService.updateUser(criteria, updateObj, options);
+  updatedUser = updatedUser.toObject();
+  delete updatedUser.password;
+  return updatedUser;
 };
 
 const updateProfilePic = async (image, user) => {
@@ -237,33 +215,25 @@ const updateProfilePic = async (image, user) => {
     email: user.email,
   };
   const base64Image = image.buffer.toString("base64");
-  try {
-    let cloudinaryResponse = await cloudinary.uploadToCloud(base64Image);
-    let updateObj = {
-      $set: {
-        profilePicUrl: cloudinaryResponse.url,
-      },
-    };
-    let options = {
-      new: true,
-    };
-    let updatedUser = await dbService.updateUser(criteria, updateObj, options);
-    return updatedUser;
-  } catch (e) {
-    throw e;
-  }
+  let cloudinaryResponse = await cloudinary.uploadToCloud(base64Image);
+  let updateObj = {
+    $set: {
+      profilePicUrl: cloudinaryResponse.url,
+    },
+  };
+  let options = {
+    new: true,
+  };
+  let updatedUser = await dbService.updateUser(criteria, updateObj, options);
+  return updatedUser;
 };
 
-const getOwnAccountInfo = async (user) => {
+const getOwnAccountInfo = async (currentUser) => {
   let criteria = {
-    email: user.email,
+    email: currentUser.email,
   };
-  try {
-    let user = await dbService.findOneUser(criteria);
-    return user;
-  } catch (e) {
-    throw e;
-  }
+  const user = await dbService.findOneUser(criteria);
+  return user;
 };
 
 const removeFavouriteImage = async (payload, user) => {
@@ -278,16 +248,8 @@ const removeFavouriteImage = async (payload, user) => {
   let options = {
     new: true,
   };
-  try {
-    let updatedUser = await dbService.updateUser(
-      criteria,
-      updateObject,
-      options
-    );
-    return updatedUser;
-  } catch (e) {
-    throw e;
-  }
+  let updatedUser = await dbService.updateUser(criteria, updateObject, options);
+  return updatedUser;
 };
 
 module.exports = {
