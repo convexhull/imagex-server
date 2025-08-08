@@ -45,7 +45,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/", indexRouter);
 app.use("/v2", routerV2);
 
-app.all("*", (req, res, next) => {
+app.all(/.*/, (req, res, next) => {
   next(
     new AppError(`Route ${req.originalUrl} doesn't exist on the server`, 404)
   );
