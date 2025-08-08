@@ -35,6 +35,11 @@ const UserSchema = Schema({
     enum: ["MEMBER", "ADMIN"],
     default: "MEMBER",
   },
+  active: {
+    type: Boolean,
+    default: true,
+    select: false,
+  },
 });
 
 UserSchema.pre("save", async function () {
@@ -60,5 +65,10 @@ UserSchema.methods.checkCorrectPassword = async function (candidatePassword) {
   );
   return isPasswordMatching;
 };
+
+UserSchema.pre(/^find/, function (next) {
+  this.find({ active: { $ne: false } });
+  next();
+});
 
 module.exports = mongoose.model("User", UserSchema);

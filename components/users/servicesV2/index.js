@@ -8,6 +8,11 @@ const { AppError } = require("../../../utils/error");
 const PROFILE_PIC_PLACEHOLDER =
   "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909__480.png";
 
+const getAllUsers = async () => {
+  const users = await User.find();
+  return users;
+};
+
 const createNewUser = async (payload) => {
   const {
     email,
@@ -262,6 +267,10 @@ const updateMe = async (currentUser, payload) => {
   return updatedUser;
 };
 
+const deleteMe = async (currentUser) => {
+  await User.findByIdAndUpdate(currentUser._id, { $set: { active: false } });
+};
+
 module.exports = {
   createNewUser,
   addFavouriteImage,
@@ -274,4 +283,6 @@ module.exports = {
   removeFavouriteImage,
   getFavouriteImage,
   updateMe,
+  getAllUsers,
+  deleteMe,
 };

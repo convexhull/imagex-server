@@ -7,6 +7,16 @@ const services = require("./services");
 const getCookiesOptions = require("../../utils/cookies");
 const { AppError } = require("../../utils/error");
 
+const getAllUsers = async (req, res) => {
+  const users = await userService.getAllUsers();
+  res.json({
+    status: "success",
+    data: {
+      users,
+    },
+  });
+};
+
 const createNewUser = async (req, res, next) => {
   const payload = { ...req };
   try {
@@ -229,6 +239,16 @@ const updateMe = async (req, res, next) => {
   });
 };
 
+const deleteMe = async (req, res) => {
+  await userService.deleteMe(req.user);
+  res.status(204).json({
+    status: "success",
+    data: {
+      user: null,
+    },
+  });
+};
+
 module.exports = {
   createNewUser,
   loginUser,
@@ -241,4 +261,6 @@ module.exports = {
   removeFavouriteImage,
   getFavouriteImage,
   updateMe,
+  deleteMe,
+  getAllUsers,
 };
