@@ -4,6 +4,7 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const cors = require("cors");
 const rateLimit = require("express-rate-limit");
+const helmet = require("helmet");
 require("dotenv").config();
 require("./db/db");
 const errorController = require("./components/error/errorController");
@@ -13,7 +14,10 @@ const indexRouter = require("./routes/index");
 const routerV2 = require("./routes/routesV2");
 
 const app = express();
+// Set HTTP headers for security
+app.use(helmet());
 
+// API rate limiting for same IP
 const rateLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
   max: 300,
@@ -46,7 +50,8 @@ app.use(
 );
 
 app.use(logger("dev"));
-app.use(express.json());
+// Security measure to restrict body size
+app.use(express.json({ limit: "10kb" }));
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
