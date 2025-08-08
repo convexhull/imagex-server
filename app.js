@@ -3,6 +3,7 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const cors = require("cors");
+const rateLimit = require("express-rate-limit");
 require("dotenv").config();
 require("./db/db");
 const errorController = require("./components/error/errorController");
@@ -12,6 +13,14 @@ const indexRouter = require("./routes/index");
 const routerV2 = require("./routes/routesV2");
 
 const app = express();
+
+const rateLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 300,
+  message: "Too many requests from this IP, please try again in an hour!",
+});
+
+app.use("/v2", rateLimiter);
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
