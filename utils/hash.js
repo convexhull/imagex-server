@@ -5,6 +5,7 @@ const encryptPassword = async (password) => {
   return await bcrypt.hash(password, ROUNDS);
 };
 
+// Todo: bad naming, it's not decryption
 const decryptPassword = async (password, hash) => {
   return await bcrypt.compare(password, hash);
 };

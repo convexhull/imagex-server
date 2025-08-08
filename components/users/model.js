@@ -13,6 +13,7 @@ const UserSchema = Schema({
     select: false,
   },
   passwordConfirm: {
+    // Just for validation. We delete in the pre-save hook so won't persist
     type: String,
     required: true,
     minlength: 8,
@@ -40,6 +41,7 @@ UserSchema.pre("save", async function () {
   if (this.isModified("password")) {
     this.password = await Hashing.encryptPassword(this.password);
     this.passwordConfirm = undefined;
+    this.passwordChangedAt = new Date();
   }
 });
 

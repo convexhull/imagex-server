@@ -2,7 +2,7 @@ const express = require("express");
 const multer = require("multer");
 const { authenticateTokenV2 } = require("../auth/authController");
 const userController = require("./controllerV2");
-
+const authController = require("../auth/authController");
 const upload = multer();
 const router = express.Router();
 
@@ -12,6 +12,7 @@ router
   .post("/logout", userController.logoutUser)
   .post("/refresh", userController.refreshToken)
   .get("/me", authenticateTokenV2, userController.getOwnAccountInfo)
+  .patch("/update-password", authenticateTokenV2, authController.updatePassword)
   .patch("/update", authenticateTokenV2, userController.updateUser)
   .patch(
     "/profile-picture",

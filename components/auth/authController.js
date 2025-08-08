@@ -1,7 +1,8 @@
 const jwt = require("jsonwebtoken");
-const { AppError } = require("../error/errorController");
+const { AppError } = require("../../utils/error");
 const util = require("util");
 const User = require("../users/model");
+const authService = require("./authServices");
 
 const authenticateTokenV2 = async (req, res, next) => {
   // Cookie based auth
@@ -39,6 +40,35 @@ const authenticateTokenV2 = async (req, res, next) => {
   next();
 };
 
+const restrictTo = (...roles) => {
+  return (req, res, next) => {
+    console.log("xxx", roles);
+    if (!roles.includes(req.user.role)) {
+      return next(
+        new AppError(
+          "You are not authorized to do this action. Please check with admin!",
+          403
+        )
+      );
+    }
+    next();
+  };
+};
+
+const updatePassword = async (req, res, next) => {
+  //TODO: RELOGIN. REFACTOR AND CREATE COOKIE SETTING FUNC
+  const payload = { ...req.body };
+  const user = await authService.updatePassword(payload, req.user);
+  res.json({
+    status: "success",
+    data: {
+      user,
+    },
+  });
+};
+
 module.exports = {
   authenticateTokenV2,
+  restrictTo,
+  updatePassword,
 };
