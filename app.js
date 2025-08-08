@@ -52,7 +52,6 @@ app.use(
 app.use(logger("dev"));
 // Security measure to restrict body size
 app.use(express.json({ limit: "10kb" }));
-app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -69,3 +68,12 @@ app.all(/.*/, (req, res, next) => {
 app.use(errorController);
 
 module.exports = app;
+
+/**
+ * TODO:
+ * Security measures:
+ * 1) HPP prevention (using Zod)
+ * 2) Use Zod for input validation
+ * 3) Use npm xss for manual sanitization (if needed) of strings (after zod validation)
+ * 4) Set Content Security Policy header in helmet (if needed)
+ */
