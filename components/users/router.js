@@ -4,7 +4,7 @@ const multer = require("multer");
 const upload = multer();
 
 const userController = require("./controller");
-const { authenticateTokenV2 } = require("../../middlewares/middleware");
+const { authenticateTokenV2 } = require("../auth/authController");
 
 const router = express.Router();
 

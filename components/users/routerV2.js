@@ -1,6 +1,6 @@
 const express = require("express");
 const multer = require("multer");
-const { authenticateTokenV2 } = require("../../middlewares/middleware");
+const { authenticateTokenV2 } = require("../auth/authController");
 const userController = require("./controllerV2");
 
 const upload = multer();
